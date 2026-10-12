@@ -3,8 +3,13 @@
 #include <vector>
 #include <matplot/matplot.h>
 
+#ifdef OMP_VERSION
+#include <omp.h>
+#endif
+
 #include <fraction>
 #include <matrix.hpp>
+
 
 #include <base_function.hpp>
 
@@ -88,10 +93,14 @@ int main() {
         Matrix vis_ans(U);
         // std::cout << ans << std::endl;
 
+        #ifdef OMP_VERSION
+        #pragma omp parallel for num_threads(NUM_THREADS)
+        #endif
         for (int i = 0; i < ans.csize(); i++) {
             // std::cout << 1 + i / (N-2) << " " << 1 + i % (N-2) << std::endl; 
             vis_ans[1 + i / (N-2)][1 + i % (N-2)] = ans[i][0];
         }
+        
         
         // std::cout << vis_ans << std::endl;
 

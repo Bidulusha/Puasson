@@ -1,7 +1,14 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <vector>
 #include <matplot/matplot.h>
+#include <format>
+#include <chrono>
+
+#ifdef OMP_VERSION
+#include <omp.h>
+#endif
 
 #include <fraction>
 #include <matrix.hpp>
@@ -9,7 +16,7 @@
 #include <base_function.hpp>
 
 namespace plt = matplot;
-
+namespace chr = std::chrono;
 
 int main() {
     // const double a = 0, b = 3, step = .5;
@@ -18,6 +25,7 @@ int main() {
     const int N = 30;
     const double a = 0, b = 3, step = (b - a) / (N - 1);
     // func::draw_plots(a, b, step, N, false);
+    auto start = chr::system_clock::now();
     
     Matrix U(N, N, 1);
     Matrix A((N-2)*(N-2), (N-2)*(N-2));
@@ -91,17 +99,22 @@ int main() {
         Matrix vis_ans(U);
         // std::cout << ans << std::endl;
 
+        #ifdef OMP_VERSION
+        #pragma omp parallel for num_threads(NUM_THREADS)
+        #endif
         for (int i = 0; i < ans.csize(); i++) {
             // std::cout << 1 + i / (N-2) << " " << 1 + i % (N-2) << std::endl; 
             vis_ans[1 + i / (N-2)][1 + i % (N-2)] = ans[i][0];
         }
         
         // std::cout << vis_ans << std::endl;
+        auto diff = chr::system_clock::now() - start;
+        std::cout << "Time of execution: " << std::setprecision(9) << 1.0 * chr::duration_cast<chr::nanoseconds>(diff).count() / 1e9 << std::endl;
 
         auto [X, Y] = plt::meshgrid(plt::iota(a, step, b));
         plt::meshz(X, Y, vis_ans.get_matrix())->palette_map_at_surface(true).face_alpha(0.5);
         // plt::hold(plt::on);
-        func::draw_plots(a, b, step, N);
+        // func::draw_plots(a, b, step, N);
         plt::show();
         
     } catch(char const* err) {
