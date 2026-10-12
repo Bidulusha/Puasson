@@ -30,6 +30,9 @@ int main() {
     Matrix U(N, N, 1);
     Matrix A((N-2)*(N-2), (N-2)*(N-2));
     Matrix B((N-2)*(N-2), 1);
+    #ifdef OMP_VERSION
+    #pragma omp parallel for num_threads(NUM_THREADS)
+    #endif
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
             if (i == 0) {
@@ -51,6 +54,9 @@ int main() {
     double h1 = 1 / (step * step);
     int m = N - 2;
 
+    #ifdef OMP_VERSION
+    #pragma omp parallel for num_threads(NUM_THREADS)
+    #endif
     for (int i = 1; i < N - 1; i++) {
         for (int j = 1; j < N - 1; j++) {
             int idx =  (i - 1) * m + j - 1;
@@ -115,6 +121,10 @@ int main() {
         plt::meshz(X, Y, vis_ans.get_matrix())->palette_map_at_surface(true).face_alpha(0.5);
         // plt::hold(plt::on);
         // func::draw_plots(a, b, step, N);
+
+        plt::xlabel("x");
+        plt::ylabel("y");
+        plt::zlabel("z");
         plt::show();
         
     } catch(char const* err) {

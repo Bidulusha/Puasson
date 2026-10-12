@@ -16,16 +16,16 @@ target_include_directories(puasson PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# target_compile_definitions(puasson PUBLIC OMP_VERSION NUM_THREADS=6)
+target_compile_definitions(puasson PUBLIC OMP_VERSION NUM_THREADS=6)
 target_link_libraries(puasson PRIVATE 
     matplot
     fraction
     matrix
 )
-# target_link_libraries(puasson PUBLIC OpenMP::OpenMP_CXX)
+target_link_libraries(puasson PUBLIC OpenMP::OpenMP_CXX)
 
-# target_compile_definitions(matrix PUBLIC OMP_VERSION NUM_THREADS=6)
-# target_link_libraries(matrix PUBLIC OpenMP::OpenMP_CXX)
+target_compile_definitions(matrix PUBLIC OMP_VERSION NUM_THREADS=6)
+target_link_libraries(matrix PUBLIC OpenMP::OpenMP_CXX)
 
 
 # add_executable(puasson_2)
